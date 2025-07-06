@@ -1,100 +1,130 @@
+const ubiGeoSchema = {
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["city_name", "country_name"],
+    properties: {
+      city_name: { bsonType: "string" },
+      country_name: { bsonType: "string" }
+    }
+  }
+};
 
 const usersSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["name", "email", "password", "role"],
+    required: ["name", "email", "password"],
     properties: {
       name: { bsonType: "string" },
       email: { bsonType: "string", pattern: "^.+@.+\\..+$" },
       password: { bsonType: "string" },
-      role: { enum: ["admin", "manager", "viewer"] },
-      creation_date: { bsonType: "date" },
-      update_date: { bsonType: "date" }
+      phone: { bsonType: "string" },
+      address: { bsonType: "string" },
+      ubi_geo_id: { bsonType: "objectId" }
     }
   }
 };
 
-const socialAccountsSchema = {
+const categoriesSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["platform", "account_name", "page_id", "access_token", "connected_by"],
+    required: ["category_name"],
     properties: {
-      platform: { enum: ["facebook", "instagram", "tiktok", "twitter"] },
-      account_name: { bsonType: "string" },
-      page_id: { bsonType: "string" },
-      access_token: { bsonType: "string" },
-      connected_by: { bsonType: "objectId" },
-      creation_date: { bsonType: "date" },
-      update_date: { bsonType: "date" }
+      category_name: { bsonType: "string" },
+      description: { bsonType: "string" }
     }
   }
 };
 
-const scheduledPostsSchema = {
+const productsSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["account_id", "content", "scheduled_date", "status"],
+    required: ["name", "unit_price", "category_id", "image_url"],
     properties: {
-      account_id: { bsonType: "objectId" },
-      content: { bsonType: "string" },
-      media_url: { bsonType: "string" },
-      scheduled_date: { bsonType: "date" },
-      status: { enum: ["pending", "sent", "failed"] },
-      creation_date: { bsonType: "date" },
-      update_date: { bsonType: "date" }
+      name: { bsonType: "string" },
+      unit_price: { bsonType: "double" },
+      unit_in_stock: { bsonType: "int" },
+      unit_on_order: { bsonType: "int" },
+      discontinued: { bsonType: "int" },
+      category_id: { bsonType: "objectId" },
+      image_url: { bsonType: "string" }
     }
   }
 };
 
-const publishedPostsSchema = {
+const ordersSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["account_id", "content", "published_date", "post_id"],
+    required: ["order_date", "user_id"],
     properties: {
-      account_id: { bsonType: "objectId" },
-      content: { bsonType: "string" },
-      media_url: { bsonType: "string" },
-      published_date: { bsonType: "date" },
-      post_id: { bsonType: "string" },
-      creation_date: { bsonType: "date" },
-      update_date: { bsonType: "date" }
+      order_date: { bsonType: "date" },
+      ship_name: { bsonType: "string" },
+      ship_address: { bsonType: "string" },
+      ship_city: { bsonType: "string" },
+      ship_region: { bsonType: "string" },
+      ship_country: { bsonType: "string" },
+      ship_date: { bsonType: "date" },
+      user_id: { bsonType: "objectId" }
     }
   }
 };
 
-const metricsSchema = {
+const statusDeliversSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["post_id", "platform", "collected_at"],
+    required: ["type"],
     properties: {
-      post_id: { bsonType: "objectId" },
-      platform: { enum: ["facebook", "instagram", "tiktok", "twitter"] },
-      impressions: { bsonType: "int" },
-      likes: { bsonType: "int" },
-      shares: { bsonType: "int" },
-      comments: { bsonType: "int" },
-      collected_at: { bsonType: "date" }
+      type: { bsonType: "string" }
     }
   }
 };
+
+
+const orderDetailsSchema = {
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["unit_price", "quantity", "product_id", "status_deliver_id", "order_id"],
+    properties: {
+      unit_price: { bsonType: "double" },
+      quantity: { bsonType: "int" },
+      product_id: { bsonType: "objectId" },
+      status_deliver_id: { bsonType: "objectId" },
+      order_id: { bsonType: "objectId" }
+    }
+  }
+};
+
+
+db.createCollection("ubi_geo", {
+  validator: ubiGeoSchema,
+  validationLevel: "strict"
+});
 
 db.createCollection("users", {
   validator: usersSchema,
   validationLevel: "strict"
 });
-db.createCollection("social_accounts", {
-  validator: socialAccountsSchema,
+
+db.createCollection("categories", {
+  validator: categoriesSchema,
   validationLevel: "strict"
 });
-db.createCollection("scheduled_posts", {
-  validator: scheduledPostsSchema,
+
+db.createCollection("products", {
+  validator: productsSchema,
   validationLevel: "strict"
 });
-db.createCollection("published_posts", {
-  validator: publishedPostsSchema,
+
+db.createCollection("orders", {
+  validator: ordersSchema,
   validationLevel: "strict"
 });
-db.createCollection("metrics", {
-  validator: metricsSchema,
+
+db.createCollection("status_delivers", {
+  validator: statusDeliversSchema,
+  validationLevel: "strict"
+});
+
+db.createCollection("order_details", {
+  validator: orderDetailsSchema,
   validationLevel: "strict"
 });
